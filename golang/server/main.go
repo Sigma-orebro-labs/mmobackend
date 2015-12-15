@@ -5,6 +5,20 @@ import (
 	"net"
 )
 
+const (
+	laddr = "127.0.0.1:3333"
+	
+	maxMessageBodyLength byte = 128;
+	messageHeaderMarker byte = 0xF0 	// 1111 0000
+	messageFooterMarker byte = 0xCC 	// 1100 1100
+	messageHeaderLength byte = 3
+	messageFooterLength byte = 1
+	
+	// Commands
+	getCurrentUserPositionCommand byte = 1
+    getCurrentUserPositionResponse byte = 2
+)
+
 var numConnections = 0
 
 type client struct {
@@ -23,7 +37,7 @@ func (c *client) Read(buffer []byte) bool {
 } 
 
 func main() {
-	l, err := net.Listen("tcp", "localhost:3333")
+	l, err := net.Listen("tcp", laddr)
 	
 	if err != nil {
 		log.Fatal(err)
@@ -31,14 +45,18 @@ func main() {
 	
 	defer l.Close()
 	
-	log.Println("Listening on localhost:3333")
+	log.Println(laddr)
 	
 	for {
+		// This will block until we recieve a connection
 		conn, err := l.Accept()
 		
 		if err != nil {
 			log.Println(err)
+			continue
 		}
+		
+		log.Println("Connection found")
 		
 		go handle(conn)
 		
@@ -48,16 +66,56 @@ func main() {
 }
 
 func handle(conn net.Conn) {
-	c := client { conn }
-	buffer := make([]byte, 2048)
+	response := make([]byte, maxMessageBodyLength)
+	response[0] = messageHeaderMarker;
+	responseBaseSize := messageHeaderLength + messageFooterLength
 	
-	for c.Read(buffer) {
-		//log.Println("Received message: ", string(buffer))
+	header := make([]byte, messageHeaderLength)
+	footer := make([]byte, messageFooterLength)
+	
+	// Read will read len(b) number of bytes
+	_, err := conn.Read(header)
+	
+	if err != nil || header[0] != messageHeaderMarker {
+		log.Println(err)
+		log.Fatal("Something went wrong while reading the message header")
+	}
+	
+	bodyLength := header[1];
+	commandCode := header[2];
+	
+	body := make([]byte, bodyLength)
+	_, err = conn.Read(body)
+	
+	if err != nil {
+		log.Println(err)
+	    log.Fatal("Something went wrong while reading the message body")
+	}
+	
+	_, err = conn.Read(footer)
+
+	if err != nil || footer[0] != messageFooterMarker {
+		log.Println(err)
+	    log.Fatal("Something went wrong while reading the message footer")
+	}
+	
+	switch (commandCode) {
+	case getCurrentUserPositionCommand:
 		
-		_, err := conn.Write([]byte("Hello from server \n"))
+		response[1] = 3; 	// 3 byte response body (x, y, z coordinates)
+	    response[2] = getCurrentUserPositionResponse;
+	    response[3] = 101; 	// x
+	    response[4] = 102; 	// y
+	    response[5] = 103; 	// z
+	    response[6] = messageFooterMarker;
 		
+		_, err = conn.Write(response[0:responseBaseSize + 3])	
 		if err != nil {
-			log.Println(err)
-		}
+	 		log.Fatal(err)
+	 	}
+			
+	    break;		
+	default:
+	    break;
 	}
 }
