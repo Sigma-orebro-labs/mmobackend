@@ -1,0 +1,30 @@
+Protocol Layout:
+ 	+---------------------------------------------------+
+ 	|                	 	Header						|
+	+---------------------------------------------------+
+ 	|                 		Command						|
+	+---------------------------------------------------+
+	|					Content Length					|
+ 	+---------------------------------------------------+
+ 	|													|
+	|						 Body						|
+	|													|
+ 	+---------------------------------------------------+
+	|						Footer						|
+ 	+---------------------------------------------------+
+
+Parts:
+	Header: 
+	Unsigned 8-bit integer with the value 0xF0 (1111 0000).
+	
+	Command: 
+	Unsigned 8-bit integer with a valid command value.
+		1 = GetCurrentUserPositionCommand
+		2 = GetCurrentUserPositionResponse
+	
+	Content Length:
+	Unsigned 16-bit integer with the length of the body in bytes.
+	
+	Footer:
+	Unsigned 8-bit integer with the value 0xCC (1100 1100).
+	
