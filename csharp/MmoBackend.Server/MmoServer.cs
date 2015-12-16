@@ -17,7 +17,7 @@ namespace MmoBackend.Server
         public const byte MessageStartMarker = 0xF0; // 1111 0000
         public const byte MessageEndMarker = 0xCC;   // 1100 1100
 
-        public const ushort MessageHeaderLength = 3; // Header marker [1 byte] + command code [1 byte] + command code [1 byte]
+        public const ushort MessageHeaderLength = 4; // Header marker [1 byte] + command code [1 byte] + content length [2 bytes]
         public const ushort MessageFooterLength = 1; // Footer marker [1 byte]
 
         public void Start(int port)
@@ -62,7 +62,7 @@ namespace MmoBackend.Server
 
                 response[0] = MessageStartMarker;
 
-                byte bodyLength;
+                ushort bodyLength;
                 byte commandCode;
 
                 while (true)
@@ -74,8 +74,8 @@ namespace MmoBackend.Server
                         // Corrupt message. Do something smart.
                     }
 
-                    bodyLength = header[1];
-                    commandCode = header[2];
+                    commandCode = header[1];
+                    bodyLength = (ushort)(header[3] << 8 | header[2]);
 
                     // Should be rewritten to ReceiveAsync
                     socket.Receive(body, bodyLength, SocketFlags.None);
@@ -92,12 +92,16 @@ namespace MmoBackend.Server
 
                             // Do something smart with the message body here...
 
+                            // 3 byte response body (x, y, z coordinates)
+                            ushort contentLength = 3;
+
                             response[1] = GetCurrentUserPositionResponse;
-                            response[2] = 3; // 3 byte response body (x, y, z coordinates)
-                            response[3] = 101; // x
-                            response[4] = 102; // y
-                            response[5] = 103; // z
-                            response[6] = MessageEndMarker;
+                            response[2] = (byte)(contentLength & 0xFF);
+                            response[3] = (byte)(contentLength >> 8);
+                            response[4] = 101; // x
+                            response[5] = 102; // y
+                            response[6] = 103; // z
+                            response[7] = MessageEndMarker;
 
                             socket.Send(response, 0, 3 + MessageHeaderLength + MessageFooterLength, SocketFlags.None);
 
