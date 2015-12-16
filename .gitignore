@@ -10,6 +10,7 @@ lib/
 *.user
 _ReSharper*
 *.exe
+SDL2.dll
 
 # Visual C++ cache files
 ipch/
