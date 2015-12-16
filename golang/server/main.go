@@ -3,10 +3,11 @@ package main
 import (
 	"log"
 	"net"
+	"io"
 )
 
 const (
-	laddr = "127.0.0.1:3333"
+	laddr = "127.0.0.1:11000"
 	
 	maxMessageBodyLength byte = 128;
 	messageHeaderMarker byte = 0xF0 	// 1111 0000
@@ -18,8 +19,6 @@ const (
 	getCurrentUserPositionCommand byte = 1
     getCurrentUserPositionResponse byte = 2
 )
-
-var numConnections = 0
 
 type client struct {
 	Conn net.Conn
@@ -56,66 +55,80 @@ func main() {
 			continue
 		}
 		
-		log.Println("Connection found")
-		
 		go handle(conn)
-		
-		numConnections++
-		log.Println("Number of connections:", numConnections)	
 	}
 }
 
 func handle(conn net.Conn) {
+	defer conn.Close()
+	
 	response := make([]byte, maxMessageBodyLength)
 	response[0] = messageHeaderMarker;
 	responseBaseSize := messageHeaderLength + messageFooterLength
 	
 	header := make([]byte, messageHeaderLength)
+	body := make([]byte, maxMessageBodyLength)
 	footer := make([]byte, messageFooterLength)
 	
-	// Read will read len(b) number of bytes
-	_, err := conn.Read(header)
-	
-	if err != nil || header[0] != messageHeaderMarker {
-		log.Println(err)
-		log.Fatal("Something went wrong while reading the message header")
-	}
-	
-	bodyLength := header[1];
-	commandCode := header[2];
-	
-	body := make([]byte, bodyLength)
-	_, err = conn.Read(body)
-	
-	if err != nil {
-		log.Println(err)
-	    log.Fatal("Something went wrong while reading the message body")
-	}
-	
-	_, err = conn.Read(footer)
-
-	if err != nil || footer[0] != messageFooterMarker {
-		log.Println(err)
-	    log.Fatal("Something went wrong while reading the message footer")
-	}
-	
-	switch (commandCode) {
-	case getCurrentUserPositionCommand:
+	for {
+		// Read will read len(b) number of bytes
+		_, err := conn.Read(header)
 		
-		response[1] = 3; 	// 3 byte response body (x, y, z coordinates)
-	    response[2] = getCurrentUserPositionResponse;
-	    response[3] = 101; 	// x
-	    response[4] = 102; 	// y
-	    response[5] = 103; 	// z
-	    response[6] = messageFooterMarker;
-		
-		_, err = conn.Write(response[0:responseBaseSize + 3])	
 		if err != nil {
-	 		log.Fatal(err)
-	 	}
+			if err == io.EOF {
+				break	
+			}
 			
-	    break;		
-	default:
-	    break;
+			log.Println(err)
+			break
+		}
+		
+		if header[0] != messageHeaderMarker {
+			log.Println("Invalid message header")
+			break 
+		}
+		
+		commandCode := header[1];
+		bodyLength := header[2];
+		
+		_, err = conn.Read(body[0:bodyLength])
+		
+		if err != nil {
+			log.Println(err)
+		    log.Println("Something went wrong while reading the message body")
+			break
+		}
+		
+		_, err = conn.Read(footer)
+	
+		if err != nil {
+			log.Println(err)
+			break
+		}
+		
+		if footer[0] != messageFooterMarker {
+			log.Fatal("Invalid message footer")
+			break
+		}
+		
+		switch (commandCode) {
+		case getCurrentUserPositionCommand:
+			
+			response[1] = getCurrentUserPositionResponse;
+			response[2] = 3; 	// 3 byte response body (x, y, z coordinates)
+		    response[3] = 101; 	// x
+		    response[4] = 102; 	// y
+		    response[5] = 103; 	// z
+		    response[6] = messageFooterMarker;
+			
+			_, err = conn.Write(response[0:responseBaseSize + 3])	
+			if err != nil {
+		 		log.Println(err)
+		 	}
+				
+		    break;		
+		default:
+		    break;
+		}
 	}
 }
