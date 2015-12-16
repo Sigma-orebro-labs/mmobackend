@@ -12,7 +12,7 @@ const (
 	maxMessageBodyLength byte = 128;
 	messageHeaderMarker byte = 0xF0 	// 1111 0000
 	messageFooterMarker byte = 0xCC 	// 1100 1100
-	messageHeaderLength byte = 3
+	messageHeaderLength byte = 4		// The last 2 bytes are used for the content length
 	messageFooterLength byte = 1
 	
 	// Commands
@@ -89,7 +89,7 @@ func handle(conn net.Conn) {
 		}
 		
 		commandCode := header[1];
-		bodyLength := header[2];
+		bodyLength := uint16(header[3] << 8 | header[2]);
 		
 		_, err = conn.Read(body[0:bodyLength])
 		
@@ -115,11 +115,16 @@ func handle(conn net.Conn) {
 		case getCurrentUserPositionCommand:
 			
 			response[1] = getCurrentUserPositionResponse;
-			response[2] = 3; 	// 3 byte response body (x, y, z coordinates)
-		    response[3] = 101; 	// x
-		    response[4] = 102; 	// y
-		    response[5] = 103; 	// z
-		    response[6] = messageFooterMarker;
+			
+			// 3 byte response body (x, y, z coordinates)
+			contentLength := uint16(3)
+			response[2] = byte(contentLength & 0xFF); 	
+			response[3] = byte(contentLength >> 8);
+			 	
+		    response[4] = 101; 	// x
+		    response[5] = 102; 	// y
+		    response[6] = 103; 	// z
+		    response[7] = messageFooterMarker;
 			
 			_, err = conn.Write(response[0:responseBaseSize + 3])	
 			if err != nil {
