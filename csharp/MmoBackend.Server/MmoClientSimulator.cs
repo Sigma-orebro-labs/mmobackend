@@ -18,7 +18,7 @@ namespace MmoBackend.Server
             try
             {
                 IPHostEntry ipHostInfo = Dns.GetHostEntry(hostname);
-                IPAddress ipAddress = ipHostInfo.AddressList[0];
+                IPAddress ipAddress = ipHostInfo.AddressList[1];
                 IPEndPoint remoteEndPoint = new IPEndPoint(ipAddress, port);
 
                 var tasks = new List<Task>();

@@ -21,7 +21,7 @@ namespace MmoBackend.Server
                 var simultaneousConnections = int.Parse(args[1]);
                 var commandsPerConnection = int.Parse(args[2]);
 
-                client.Start("127.0.0.1", port: 11000, commandsPerConnection: commandsPerConnection, simultaneousConnections: simultaneousConnections);
+                client.Start("localhost", port: 11000, commandsPerConnection: commandsPerConnection, simultaneousConnections: simultaneousConnections);
 
                 var endTime = DateTime.Now;
                 var ellapsedSeconds = (endTime - startTime).TotalSeconds;
