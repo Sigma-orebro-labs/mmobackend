@@ -4,6 +4,7 @@
 [Rr]eleases/
 [Bb]in
 [Oo]bj
+lib/
 
 *.suo
 *.user
