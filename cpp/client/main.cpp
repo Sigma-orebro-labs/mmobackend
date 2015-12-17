@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #include "game\object.h"
+#include "network\client.h"
 
 bool init_sdl();
 
@@ -12,8 +13,20 @@ const int window_height = 800;
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
 
+SDL_Rect enemy_rect = { 0, 0, 30, 30 };
+
 int main(int argc, char* argv[])
 {
+	auto network_client = std::make_unique<Client>();
+	network_client->init();
+	network_client->create_connection();
+
+	int x, y = 0;
+	network_client->get_enemy_positions(x, y);
+	enemy_rect.x = x;
+	enemy_rect.y = y;
+
+
 	if (!init_sdl())
 	{
 		printf("SDL could not be initialized! SDL_Error: %s\n", SDL_GetError());
@@ -49,6 +62,9 @@ int main(int argc, char* argv[])
 
 		player->update(dt);
 		player->render(renderer);
+
+		SDL_SetRenderDrawColor(renderer, 0xFF, 0, 0, 0xFF);
+		SDL_RenderFillRect(renderer, &enemy_rect);
 
 		SDL_RenderPresent(renderer);
 	}

@@ -18,6 +18,8 @@ const (
 	// Commands
 	getCurrentUserPositionCommand byte = 1
     getCurrentUserPositionResponse byte = 2
+	getEnemyPositionCommand byte = 3;
+	getEnemyPositionResponse byte = 4;
 )
 
 type client struct {
@@ -113,7 +115,7 @@ func handle(conn net.Conn) {
 		
 		switch (commandCode) {
 		case getCurrentUserPositionCommand:
-			
+			log.Println("getCurrentUserPositionCommand")
 			response[1] = getCurrentUserPositionResponse;
 			
 			// 3 byte response body (x, y, z coordinates)
@@ -131,7 +133,27 @@ func handle(conn net.Conn) {
 		 		log.Println(err)
 		 	}
 				
-		    break;		
+		    break;
+		case getEnemyPositionCommand:
+			log.Println("getEnemyPositionCommand")
+			response[1] = getEnemyPositionResponse;
+			
+			// 3 byte response body (x, y, z coordinates)
+			contentLength := uint16(3)
+			response[2] = byte(contentLength & 0xFF); 	
+			response[3] = byte(contentLength >> 8);
+			 	
+		    response[4] = 101; 	// x
+		    response[5] = 102; 	// y
+		    response[6] = 103; 	// z
+		    response[7] = messageFooterMarker;
+			
+			_, err = conn.Write(response[0:responseBaseSize + 3])	
+			if err != nil {
+		 		log.Println(err)
+		 	}
+				
+		    break;				
 		default:
 		    break;
 		}

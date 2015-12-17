@@ -131,9 +131,11 @@
   <ItemGroup>
     <ClCompile Include="Game\object.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="network\client.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\object.h" />
+    <ClInclude Include="network\client.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
