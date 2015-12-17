@@ -58,10 +58,11 @@ namespace MmoBackend.Server
 
                 for (int i = 0; i < commandsPerConnection; i++)
                 {
-                    ushort contentLength = 1;
+                    byte b1, b2;
+                    TypeConverter.UShortToBytes(1, out b1, out b2);
                     request[1] = MmoServer.GetCurrentUserPositionCommand;
-                    request[2] = (byte)(contentLength & 0xFF);
-                    request[3] = (byte)(contentLength >> 8);
+                    request[2] = b1;
+                    request[3] = b2;
                     request[4] = 189; // Single body byte with some value (add something with actual meaning here later...)
                     request[5] = MmoServer.MessageEndMarker;
 
@@ -69,7 +70,7 @@ namespace MmoBackend.Server
 
                     socket.Receive(header);
 
-                    bodyLength = (ushort)(header[3] << 8 | header[2]);
+                    bodyLength = TypeConverter.BytesToUShort(header[2], header[3]);
 
                     if (header[0] != MmoServer.MessageStartMarker)
                     {

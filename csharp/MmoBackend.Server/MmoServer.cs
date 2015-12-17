@@ -75,7 +75,7 @@ namespace MmoBackend.Server
                     }
 
                     commandCode = header[1];
-                    bodyLength = (ushort)(header[3] << 8 | header[2]);
+                    bodyLength = TypeConverter.BytesToUShort(header[2], header[3]);
 
                     // Should be rewritten to ReceiveAsync
                     socket.Receive(body, bodyLength, SocketFlags.None);
@@ -93,11 +93,12 @@ namespace MmoBackend.Server
                             // Do something smart with the message body here...
 
                             // 3 byte response body (x, y, z coordinates)
-                            ushort contentLength = 3;
+                            byte b1, b2;
+                            TypeConverter.UShortToBytes(3, out b1, out b2);
 
                             response[1] = GetCurrentUserPositionResponse;
-                            response[2] = (byte)(contentLength & 0xFF);
-                            response[3] = (byte)(contentLength >> 8);
+                            response[2] = b1;
+                            response[3] = b2;
                             response[4] = 101; // x
                             response[5] = 102; // y
                             response[6] = 103; // z

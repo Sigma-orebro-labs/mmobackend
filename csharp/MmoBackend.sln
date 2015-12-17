@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MmoBackend.Server", "MmoBackend.Server\MmoBackend.Server.csproj", "{75C393DC-F5C0-4123-B345-9BA246F41333}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MmoBackend.Test", "MmoBackend.Test\MmoBackend.Test.csproj", "{E7E50C5B-3474-4942-AF2C-36D81ECD3653}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{75C393DC-F5C0-4123-B345-9BA246F41333}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75C393DC-F5C0-4123-B345-9BA246F41333}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75C393DC-F5C0-4123-B345-9BA246F41333}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7E50C5B-3474-4942-AF2C-36D81ECD3653}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7E50C5B-3474-4942-AF2C-36D81ECD3653}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7E50C5B-3474-4942-AF2C-36D81ECD3653}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7E50C5B-3474-4942-AF2C-36D81ECD3653}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
