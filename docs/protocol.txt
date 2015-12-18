@@ -19,6 +19,8 @@ Parts:
 	Unsigned 8-bit integer with a valid command value.
 		1 = GetCurrentUserPositionCommand
 		2 = GetCurrentUserPositionResponse
+		3 = GetEnemyPositionsCommand --> UDP
+		4 = GetEnemyPositionsResponseCode --> UDP
 	
 	Content Length:
 	Unsigned 16-bit integer with the length of the body in bytes.

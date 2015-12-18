@@ -7,11 +7,27 @@ import (
 )
 
 const (
-	laddr = "127.0.0.1:11000"
+	ip = "127.0.0.1"
+	tcpPort = 11000
+	udpPort = 11001
 )
 
 func main() {
-	l, err := net.Listen("tcp", laddr)
+	block := make(chan bool)
+	
+	go listenTcp()
+	go listenUdp()
+	
+	<-block
+}
+
+func listenTcp() {
+	addr := net.TCPAddr {
+		Port: tcpPort,
+		IP: net.ParseIP(ip),
+	}
+	
+	l, err := net.ListenTCP("tcp", &addr)
 	
 	if err != nil {
 		log.Fatal(err)
@@ -19,7 +35,7 @@ func main() {
 	
 	defer l.Close()
 	
-	log.Println(laddr)
+	log.Println("Tcp: ", ip, ":", tcpPort)
 	
 	for {
 		// This will block until we recieve a connection
@@ -30,6 +46,32 @@ func main() {
 			continue
 		}
 		
-		go handlers.Handle(conn)
+		go handlers.HandleTcp(conn)
+	}
+}
+
+func listenUdp() {
+	addr := net.UDPAddr {
+		Port: udpPort,
+		IP: net.ParseIP(ip),
+	}
+	
+	buffer := make([]byte, 1024)
+	
+	conn, err := net.ListenUDP("udp", &addr)
+	
+	if err != nil {
+		log.Fatal(err)
+	}
+	
+	log.Println("Udp: ", ip, ":", udpPort)
+	
+	for {
+		_, _, err = conn.ReadFromUDP(buffer)
+		
+		if err != nil {
+			log.Println(err)
+			continue
+		}
 	}
 }
