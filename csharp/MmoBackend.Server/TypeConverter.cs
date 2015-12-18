@@ -4,7 +4,7 @@
     {
         public static ushort BytesToUShort(byte b1, byte b2)
         {
-            return (ushort)((b2 << 8) | b1 << 0);
+            return (ushort)((b2 << 8) | b1);
         }
 
         public static void UShortToBytes(ushort number, out byte b1, out byte b2)
