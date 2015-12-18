@@ -4,6 +4,7 @@ import (
 	"log"
 	"net"
 	"io"
+	"github.com/Sigma-orebro-labs/mmobackend/golang/server/util"
 )
 
 const (
@@ -91,7 +92,7 @@ func handle(conn net.Conn) {
 		}
 		
 		commandCode := header[1];
-		bodyLength := uint16(header[3] << 8 | header[2]);
+		bodyLength := util.BytesToUint16(header[2], header[3])
 		
 		_, err = conn.Read(body[0:bodyLength])
 		
@@ -119,9 +120,9 @@ func handle(conn net.Conn) {
 			response[1] = getCurrentUserPositionResponse;
 			
 			// 3 byte response body (x, y, z coordinates)
-			contentLength := uint16(3)
-			response[2] = byte(contentLength & 0xFF); 	
-			response[3] = byte(contentLength >> 8);
+			b1, b2 := util.Uint16ToBytes(3)
+			response[2] = b1; 	
+			response[3] = b2;
 			 	
 		    response[4] = 101; 	// x
 		    response[5] = 102; 	// y
@@ -139,9 +140,9 @@ func handle(conn net.Conn) {
 			response[1] = getEnemyPositionResponse;
 			
 			// 3 byte response body (x, y, z coordinates)
-			contentLength := uint16(3)
-			response[2] = byte(contentLength & 0xFF); 	
-			response[3] = byte(contentLength >> 8);
+			b1, b2 := util.Uint16ToBytes(3)
+			response[2] = b1; 	
+			response[3] = b2;
 			 	
 		    response[4] = 101; 	// x
 		    response[5] = 102; 	// y
