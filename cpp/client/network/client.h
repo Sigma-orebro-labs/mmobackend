@@ -9,10 +9,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
-// Link with Ws2_32.lib, Mswsock.lib, and Advapi32.lib
-#pragma comment (lib, "Ws2_32.lib")
-#pragma comment (lib, "Mswsock.lib")
-#pragma comment (lib, "AdvApi32.lib")
+#include "../exceptions/mmo_exception.h"
+#include "../util/type_converter.h"
 
 const char MAX_MESSAGE_BODY_LENGTH = 128;
 const char MESSAGE_HEADER_MARKER = 0xF0; 	// 1111 0000
@@ -31,15 +29,6 @@ class Client
 public:
 	Client();
 
-	bool init();
-	bool create_connection();
-	void close_connection();
-	void get_enemy_positions(int& x, int& y);
-
-private:
-	WSADATA wsa_data_;
+protected:
 	SOCKET socket_;
-	struct addrinfo* result_;
-	struct addrinfo* ptr_;
-	struct addrinfo hints_;
 };

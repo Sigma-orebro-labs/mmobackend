@@ -13,6 +13,8 @@ const (
 )
 
 func main() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	
 	block := make(chan bool)
 	
 	go listenTcp()
@@ -56,7 +58,7 @@ func listenUdp() {
 		IP: net.ParseIP(ip),
 	}
 	
-	buffer := make([]byte, 1024)
+	var buffer [1024]byte
 	
 	conn, err := net.ListenUDP("udp", &addr)
 	
@@ -67,11 +69,13 @@ func listenUdp() {
 	log.Println("Udp: ", ip, ":", udpPort)
 	
 	for {
-		_, _, err = conn.ReadFromUDP(buffer)
+		_, udpAddr, err := conn.ReadFromUDP(buffer[:])
 		
 		if err != nil {
 			log.Println(err)
 			continue
 		}
+		
+		go handlers.HandleUdp(buffer, udpAddr)
 	}
 }

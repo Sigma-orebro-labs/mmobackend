@@ -24,12 +24,36 @@
     <ClCompile Include="network\client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="network\win_sock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="network\tcp_client.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="network\udp_client.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\object.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="network\client.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="network\udp_client.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="network\win_sock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="exceptions\mmo_exception.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="util\type_converter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="network\tcp_client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

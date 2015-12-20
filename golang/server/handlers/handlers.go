@@ -5,7 +5,12 @@ import (
 	"log"
 	"io"
 	"github.com/Sigma-orebro-labs/mmobackend/golang/server/util"
+	//"github.com/Sigma-orebro-labs/mmobackend/golang/server/game"
 )
+
+func HandleUdp(data [1024]byte, addr *net.UDPAddr) {
+	log.Println(string(data[0:100]))
+}
 
 func HandleTcp(conn net.Conn) {
 	defer conn.Close()
@@ -38,7 +43,7 @@ func HandleTcp(conn net.Conn) {
 		
 		commandCode := header[1];
 		bodyLength := util.BytesToUint16(header[2], header[3])
-		
+		log.Println("bodyLength: ", bodyLength)
 		_, err = conn.Read(body[0:bodyLength])
 		
 		if err != nil {

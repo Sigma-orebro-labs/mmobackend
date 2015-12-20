@@ -2,8 +2,10 @@
 #include <memory>
 #include <stdio.h>
 
-#include "game\object.h"
-#include "network\client.h"
+#include "game/object.h"
+#include "network/win_sock.h"
+#include "network/tcp_client.h"
+#include "network/udp_client.h"
 
 bool init_sdl();
 
@@ -17,12 +19,16 @@ SDL_Rect enemy_rect = { 0, 0, 30, 30 };
 
 int main(int argc, char* argv[])
 {
-	auto network_client = std::make_unique<Client>();
-	network_client->init();
-	network_client->create_connection();
+	WinSock::initialize();
+
+	auto tcp_client = std::make_unique<TcpClient>("localhost", "11000");
+	tcp_client->create_connection();
+
+	auto udp_client = std::make_unique<UdpClient>("127.0.0.1", 11001);
+	udp_client->send();
 
 	int x, y = 0;
-	network_client->get_enemy_positions(x, y);
+	tcp_client->get_enemy_positions(x, y);
 	enemy_rect.x = x;
 	enemy_rect.y = y;
 
@@ -72,6 +78,7 @@ int main(int argc, char* argv[])
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+	WinSock::cleanup();
 
 	return 0;
 }
