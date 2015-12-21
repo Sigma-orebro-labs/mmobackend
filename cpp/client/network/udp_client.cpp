@@ -2,6 +2,8 @@
 
 UdpClient::UdpClient(const char* ip_address, USHORT port)
 {
+	socket_ = INVALID_SOCKET;
+
 	if ((socket_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == SOCKET_ERROR)
 	{
 		printf("socket() failed with error code : %d", WSAGetLastError());
@@ -22,7 +24,6 @@ UdpClient::~UdpClient()
 void UdpClient::send()
 {
 	auto message = "Hello from client!";
-	//send the message
 	if (sendto(socket_, message, strlen(message), 0, (struct sockaddr*)&sockaddr_in_, sizeof(sockaddr_in_)) == SOCKET_ERROR)
 	{
 		printf("sendto() failed with error code : %d", WSAGetLastError());

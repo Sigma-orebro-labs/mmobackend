@@ -27,10 +27,8 @@ int main(int argc, char* argv[])
 	auto udp_client = std::make_unique<UdpClient>("127.0.0.1", 11001);
 	udp_client->send();
 
-	int x, y = 0;
-	tcp_client->get_enemy_positions(x, y);
-	enemy_rect.x = x;
-	enemy_rect.y = y;
+	enemy_rect.x = 0;
+	enemy_rect.y = 0;
 
 
 	if (!init_sdl())

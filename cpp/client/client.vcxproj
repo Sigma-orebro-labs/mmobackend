@@ -131,7 +131,7 @@
   <ItemGroup>
     <ClCompile Include="Game\object.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="network\client.cpp" />
+    <ClCompile Include="network\message.cpp" />
     <ClCompile Include="network\tcp_client.cpp" />
     <ClCompile Include="network\udp_client.cpp" />
     <ClCompile Include="network\win_sock.cpp" />
@@ -139,7 +139,7 @@
   <ItemGroup>
     <ClInclude Include="exceptions\mmo_exception.h" />
     <ClInclude Include="Game\object.h" />
-    <ClInclude Include="network\client.h" />
+    <ClInclude Include="network\message.h" />
     <ClInclude Include="network\tcp_client.h" />
     <ClInclude Include="network\udp_client.h" />
     <ClInclude Include="network\win_sock.h" />

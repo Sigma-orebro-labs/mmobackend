@@ -21,9 +21,6 @@
     <ClCompile Include="Game\object.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="network\client.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="network\win_sock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -33,12 +30,12 @@
     <ClCompile Include="network\udp_client.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="network\message.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game\object.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="network\client.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="network\udp_client.h">
@@ -54,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="network\tcp_client.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="network\message.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

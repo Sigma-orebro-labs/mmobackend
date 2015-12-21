@@ -2,6 +2,7 @@
 
 TcpClient::TcpClient(const char* ip_address, const char* port)
 {
+	socket_ = INVALID_SOCKET;
 	result_ = nullptr;
 	ptr_ = nullptr;
 
@@ -62,60 +63,60 @@ bool TcpClient::create_connection()
 	return true;
 }
 
-void TcpClient::get_enemy_positions(int& x, int& y)
-{
-	const int REQUEST_BUFFER_LENGTH = MESSAGE_HEADER_LENGTH + MESSAGE_FOOTER_LENGTH + 1;
-	char request_buffer[REQUEST_BUFFER_LENGTH];
-
-	char b1, b2;
-	uint16_to_bytes(1, b1, b2);
-	request_buffer[0] = MESSAGE_HEADER_MARKER;
-	request_buffer[1] = GET_ENEMY_POSITION_COMMAND;
-	request_buffer[2] = b1;
-	request_buffer[3] = b2;
-	request_buffer[4] = 123;
-	request_buffer[5] = MESSAGE_FOOTER_MARKER;
-
-	const int RESPONSE_BUFFER_LENGTH = MESSAGE_HEADER_LENGTH + MESSAGE_FOOTER_LENGTH + 3;
-	char response_buffer[MESSAGE_HEADER_LENGTH + MESSAGE_FOOTER_LENGTH + 3];
-
-	int result;
-
-	// Send an initial buffer
-	result = send(socket_, request_buffer, REQUEST_BUFFER_LENGTH, 0);
-	if (result == SOCKET_ERROR)
-	{
-		printf("send failed with error: %d\n", WSAGetLastError());
-		closesocket(socket_);
-		WSACleanup();
-		return;
-	}
-
-	printf("Bytes Sent: %ld\n", result);
-
-	result = recv(socket_, response_buffer, RESPONSE_BUFFER_LENGTH, 0);
-	if (result > 0)
-	{
-		printf("Bytes received: %d\n", result);
-		if (response_buffer[1] == GET_ENEMY_POSITION_RESPONSE)
-		{
-			printf("Recived %i \n", response_buffer[1]);
-		}
-		else
-		{
-			printf("Unexpected response code \n");
-			return;
-		}
-
-		x = response_buffer[4]; 	// x
-		y = response_buffer[5]; 	// y
-
-		printf("X: %i \n", response_buffer[4]);
-		printf("Y: %i \n", response_buffer[5]);
-	}
-	else if (result == 0)
-		printf("Connection closed\n");
-	else
-		printf("recv failed with error: %d\n", WSAGetLastError());
-}
+//void TcpClient::get_enemy_positions(int& x, int& y)
+//{
+//	const int REQUEST_BUFFER_LENGTH = MESSAGE_HEADER_LENGTH + MESSAGE_FOOTER_LENGTH + 1;
+//	char request_buffer[REQUEST_BUFFER_LENGTH];
+//
+//	char b1, b2;
+//	uint16_to_bytes(1, b1, b2);
+//	request_buffer[0] = MESSAGE_HEADER_MARKER;
+//	request_buffer[1] = GET_ENEMY_POSITION_COMMAND;
+//	request_buffer[2] = b1;
+//	request_buffer[3] = b2;
+//	request_buffer[4] = 123;
+//	request_buffer[5] = MESSAGE_FOOTER_MARKER;
+//
+//	const int RESPONSE_BUFFER_LENGTH = MESSAGE_HEADER_LENGTH + MESSAGE_FOOTER_LENGTH + 3;
+//	char response_buffer[MESSAGE_HEADER_LENGTH + MESSAGE_FOOTER_LENGTH + 3];
+//
+//	int result;
+//
+//	// Send an initial buffer
+//	result = send(socket_, request_buffer, REQUEST_BUFFER_LENGTH, 0);
+//	if (result == SOCKET_ERROR)
+//	{
+//		printf("send failed with error: %d\n", WSAGetLastError());
+//		closesocket(socket_);
+//		WSACleanup();
+//		return;
+//	}
+//
+//	printf("Bytes Sent: %ld\n", result);
+//
+//	result = recv(socket_, response_buffer, RESPONSE_BUFFER_LENGTH, 0);
+//	if (result > 0)
+//	{
+//		printf("Bytes received: %d\n", result);
+//		if (response_buffer[1] == GET_ENEMY_POSITION_RESPONSE)
+//		{
+//			printf("Recived %i \n", response_buffer[1]);
+//		}
+//		else
+//		{
+//			printf("Unexpected response code \n");
+//			return;
+//		}
+//
+//		x = response_buffer[4]; 	// x
+//		y = response_buffer[5]; 	// y
+//
+//		printf("X: %i \n", response_buffer[4]);
+//		printf("Y: %i \n", response_buffer[5]);
+//	}
+//	else if (result == 0)
+//		printf("Connection closed\n");
+//	else
+//		printf("recv failed with error: %d\n", WSAGetLastError());
+//}
 
