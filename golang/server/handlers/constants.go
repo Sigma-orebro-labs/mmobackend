@@ -10,6 +10,6 @@ const (
 	// Commands
 	getCurrentUserPositionCommandCode byte = 1
 	getCurrentUserPositionResponseCode byte = 2
-	getEnemyPositionsCommandCode byte = 3
-	getEnemyPositionsResponseCode byte = 4
+	updatePlayerPositionCommandCode byte = 3
+	updateEnemyPositionsCommandCode byte = 4
 )

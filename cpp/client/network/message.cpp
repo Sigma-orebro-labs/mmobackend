@@ -2,7 +2,7 @@
 
 Message::Message(Command c)
 	:
-	index_(0)
+	index_(MESSAGE_HEADER_LENGTH)
 {
 	message_[0] = HEADER;
 	message_[1] = static_cast<char>(c);
@@ -28,10 +28,12 @@ void Message::append_to_body(uint16_t v)
 const char* Message::bytes()
 {
 	char b1, b2;
-	uint16_to_bytes(index_, b1, b2);
+	uint16_to_bytes(index_ - MESSAGE_HEADER_LENGTH, b1, b2);
 
 	message_[2] = b1;
 	message_[3] = b2;
+
+	message_[index_] = FOOTER;
 
 	return message_;
 }

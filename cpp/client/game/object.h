@@ -10,6 +10,8 @@ public:
 	void render(SDL_Renderer* renderer) const;
 	void update(float dt);
 	void Object::handle_events(const SDL_Event* e);
+	int get_x() const;
+	int get_y() const;
 
 private:
 	int vel_x_;

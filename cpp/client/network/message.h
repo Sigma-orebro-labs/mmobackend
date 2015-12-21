@@ -9,20 +9,14 @@ const std::size_t MESSAGE_HEADER_LENGTH = 4;	// The last 2 bytes are used for th
 const std::size_t MESSAGE_FOOTER_LENGTH = 1;
 const std::size_t MAX_MESSAGE_BODY_LENGTH = 128;
 
-const unsigned char HEADER = 0xF0;
-const unsigned char FOOTER = 0xCC;
-
-// Commands
-const char GET_CURRENT_USER_POSITION_COMMAND = 1;
-const char GET_CURRENT_USER_POSITION_RESPONSE = 2;
-const char UPDATE_POSITION_COMMAND = 3;
-const char UPDATE_ENEMY_POSITIONS_COMMAND = 4;
+const char HEADER = 0xF0;
+const char FOOTER = 0xCC;
 
 enum class Command : char
 {
 	GET_CURRENT_USER_POSITION_COMMAND = 1,
 	GET_CURRENT_USER_POSITION_RESPONSE = 2,
-	UPDATE_POSITION_COMMAND = 3,
+	UPDATE_PLAYER_POSITION_COMMAND = 3,
 	UPDATE_ENEMY_POSITIONS_COMMAND = 4,
 };
 

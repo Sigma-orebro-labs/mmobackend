@@ -9,7 +9,28 @@ import (
 )
 
 func HandleUdp(data [1024]byte, addr *net.UDPAddr) {
-	log.Println(string(data[0:100]))
+	if data[0] != messageHeaderMarker {
+		log.Println("Invalid message header")
+	}
+	
+	commandCode := data[1];
+	bodyLength := util.BytesToUint16(data[2], data[3])
+	
+	footer := data[uint16(messageHeaderLength) + bodyLength]	
+	if footer != messageFooterMarker {
+		log.Fatal("Invalid message footer")
+	}
+	
+	switch (commandCode) {
+	case updatePlayerPositionCommandCode:
+		x := util.BytesToUint16(data[4], data[5])
+		y := util.BytesToUint16(data[6], data[7])
+		log.Println("X: ", x)
+		log.Println("Y: ", y)
+	    break;
+	default:
+	    break;
+	}
 }
 
 func HandleTcp(conn net.Conn) {
@@ -67,9 +88,6 @@ func HandleTcp(conn net.Conn) {
 		switch (commandCode) {
 		case getCurrentUserPositionCommandCode:
 			getCurrentUserPositionCommand(response, conn, responseBaseSize)							
-		    break;
-		case getEnemyPositionsCommandCode:
-			getEnemyPositionsCommand(response, conn, responseBaseSize)
 		    break;				
 		default:
 		    break;
@@ -79,25 +97,6 @@ func HandleTcp(conn net.Conn) {
 
 func getCurrentUserPositionCommand(response []byte, conn net.Conn, responseBaseSize byte) {
 	response[1] = getCurrentUserPositionResponseCode;
-	
-	// 3 byte response body (x, y, z coordinates)
-	b1, b2 := util.Uint16ToBytes(3)
-	response[2] = b1; 	
-	response[3] = b2;
-	 	
-	response[4] = 101; 	// x
-	response[5] = 102; 	// y
-	response[6] = 103; 	// z
-	response[7] = messageFooterMarker;
-	
-	_, err := conn.Write(response[0:responseBaseSize + 3])	
-	if err != nil {
-		log.Println(err)
-	}
-}
-
-func getEnemyPositionsCommand(response []byte, conn net.Conn, responseBaseSize byte) {
-	response[1] = getEnemyPositionsResponseCode;
 	
 	// 3 byte response body (x, y, z coordinates)
 	b1, b2 := util.Uint16ToBytes(3)

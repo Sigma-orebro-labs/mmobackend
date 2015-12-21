@@ -4,10 +4,11 @@
 
 #include "game/object.h"
 #include "network/win_sock.h"
-#include "network/tcp_client.h"
 #include "network/udp_client.h"
+#include "network/message.h"
 
 bool init_sdl();
+void update_player_position(const std::unique_ptr<UdpClient>& c, const std::unique_ptr<Object>& p);
 
 const int window_width = 800;
 const int window_height = 800;
@@ -21,11 +22,7 @@ int main(int argc, char* argv[])
 {
 	WinSock::initialize();
 
-	auto tcp_client = std::make_unique<TcpClient>("localhost", "11000");
-	tcp_client->create_connection();
-
 	auto udp_client = std::make_unique<UdpClient>("127.0.0.1", 11001);
-	udp_client->send();
 
 	enemy_rect.x = 0;
 	enemy_rect.y = 0;
@@ -42,6 +39,8 @@ int main(int argc, char* argv[])
 	auto last_frame_time = SDL_GetTicks();
 
 	auto player = std::make_unique<Object>(window_width / 2, window_height / 2, 30, 30);
+	update_player_position(udp_client, player);
+	auto last_player_position_update = SDL_GetTicks();
 
 	while (running)
 	{
@@ -71,6 +70,14 @@ int main(int argc, char* argv[])
 		SDL_RenderFillRect(renderer, &enemy_rect);
 
 		SDL_RenderPresent(renderer);
+
+		auto now = SDL_GetTicks();
+		// Update our position every 50 ms
+		if (now - last_player_position_update > 50)
+		{
+			update_player_position(udp_client, player);
+			last_player_position_update = now;
+		}
 	}
 
 	SDL_DestroyRenderer(renderer);
@@ -79,6 +86,15 @@ int main(int argc, char* argv[])
 	WinSock::cleanup();
 
 	return 0;
+}
+
+void update_player_position(const std::unique_ptr<UdpClient>& c, const std::unique_ptr<Object>& p)
+{
+	auto msg = Message(Command::UPDATE_PLAYER_POSITION_COMMAND);
+	msg.append_to_body(static_cast<uint16_t>(p->get_x()));
+	msg.append_to_body(static_cast<uint16_t>(p->get_y()));
+
+	c->send(msg);
 }
 
 bool init_sdl()

@@ -7,6 +7,7 @@
 #include <ws2tcpip.h>
 
 #include "../exceptions/mmo_exception.h"
+#include "message.h"
 
 class UdpClient
 {
@@ -14,7 +15,7 @@ public:
 	UdpClient(const char* ip_address, USHORT port);
 	~UdpClient();
 
-	void send();
+	void send(Message& msg);
 
 private:
 	SOCKET socket_;

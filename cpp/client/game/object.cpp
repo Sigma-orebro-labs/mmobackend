@@ -47,3 +47,13 @@ void Object::handle_events(const SDL_Event* e)
 		}
 	}
 }
+
+int Object::get_x() const
+{
+	return body_.x;
+}
+
+int Object::get_y() const
+{
+	return body_.y;
+}
