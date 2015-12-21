@@ -5,8 +5,10 @@ import (
 	"log"
 	"io"
 	"github.com/Sigma-orebro-labs/mmobackend/golang/server/util"
-	//"github.com/Sigma-orebro-labs/mmobackend/golang/server/game"
+	"github.com/Sigma-orebro-labs/mmobackend/golang/server/game"
 )
+
+var g = game.Start()
 
 func HandleUdp(data [1024]byte, addr *net.UDPAddr) {
 	if data[0] != messageHeaderMarker {
@@ -25,8 +27,16 @@ func HandleUdp(data [1024]byte, addr *net.UDPAddr) {
 	case updatePlayerPositionCommandCode:
 		x := util.BytesToUint16(data[4], data[5])
 		y := util.BytesToUint16(data[6], data[7])
-		log.Println("X: ", x)
-		log.Println("Y: ", y)
+		
+		if g.IsNewPlayer(addr) {
+			g.AddPlayer(addr, int(x), int(y))
+		} else {
+			g.UpdatePlayer(addr, int(x), int(y))
+		}
+		
+		// The server needs to keep track on when to update, right now every client update triggers it
+		g.UpdateAll()
+		
 	    break;
 	default:
 	    break;
